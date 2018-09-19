@@ -14,8 +14,8 @@
       * Check `totalBonus`
       * Check `userCount`
   5. If all checks correspond to your local bonus list - load Airdrop contract with enough RNDR tokens (`totalBonus`)
-  6. Call `payManyUsers(idFrom, idTo)` with user-array id's that should be paid. Should be done in several batches (paying each user costs around 40-50k gas)
-  7. Excess tokens left on the contract can be withdrawn by calling `returnTokens()`
+  6. Call `payManyUsers(batchSize)` with a chosen `batchSize` several times (paying each user costs around 40-50k gas)
+  7. If any excess tokens are left on the contract - it can be withdrawn by calling `returnTokens()`
 
 
 ## Testing:
