@@ -4,12 +4,12 @@
 
 ## Contract workflow:
 
-  0. Prepare a list of users addresses + bonus amounts
-  1. Deploy Airdrop contract pointing to RNDR token ERC20 contract address in constuctor
-  2. Call `addManyUsers(userAddresses[], bonusAmounts[])` with corresponding arrays. Can be done several batches (each user costs around 80k gas)
-  3. Call `finalizeList()` to lock user bonus list modification
-  4. Perform list safety checks:
-      * Check that `bonusAddresses[]` array contains only allowed users
+  0. Prepare a CSV bonus list with `users address`, `bonus amount`
+  1. Deploy Airdrop contract (pointing to RNDR token ERC20 contract address in a constuctor)
+  2. Call `addManyUsers(userAddresses[], bonusAmounts[])` with corresponding arrays. Can be done several batches (adding each user costs around 80k gas)
+  3. Call `finalizeList()` to lock the modification of user bonus list
+  4. Perform safety checks on the blockchain list:
+      * Check that `bonusAddresses[]` array contain only allowed users
       * Check that corresponding `bonusAmounts` mappings have relevant amount of bonus
       * Check `totalBonus`
       * Check `userCount`
