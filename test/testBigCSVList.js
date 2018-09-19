@@ -1,4 +1,5 @@
-var fs = require('fs')
+const BN = require('bn.js');
+const fs = require('fs')
 
 function loadBonusList() {
   let file = fs.readFileSync('./test/testBonusList.csv').toString().split('\r\n')
@@ -20,10 +21,10 @@ contract("Big CSV List Airdrop Simulation", async ([owner]) => {
     rndr = await RenderTokenMock.deployed();
     let bonusList = loadBonusList()
     users = bonusList.map((e) => {return e[0]})
-    bonuses = bonusList.map((e) => {return parseInt(e[1])}) //TODO: check with BN
-    totalBonus = bonuses.reduce((acc, val) => acc + val, 0)
+    bonuses = bonusList.map((e) => {return new BN(e[1])})
+    totalBonus = bonuses.reduce((acc, val) => acc.add(val), new BN(0))
     userCount = bonuses.length
-    })
+  })
 
   it("sets an owner", async () => {
     assert.equal(await airdrop.owner(), owner)
@@ -31,7 +32,7 @@ contract("Big CSV List Airdrop Simulation", async ([owner]) => {
 
   it("has balance", async () => {
     let balance = await rndr.balanceOf(owner)
-    assert(balance.gt(0), `Owner has ${balance.toNumber()} RNDR`)
+    assert(balance.gt(0), `Owner has ${balance.toString()} RNDR`)
   })
   
   it("add multiple users (userCount check)", async () => {
@@ -60,12 +61,12 @@ contract("Big CSV List Airdrop Simulation", async ([owner]) => {
 
   it("check bonuses amounts list", async () => {
     for (let i = 0; i < userCount; i++) {
-      assert.equal(await airdrop.bonusAmounts(await airdrop.bonusAddresses(i)), bonuses[i])
+      assert(bonuses[i].eq(await airdrop.bonusAmounts(await airdrop.bonusAddresses(i))))
     }
   })
 
   it("check totalBonus amount", async () => {
-    assert.equal(await airdrop.totalBonus(), totalBonus)
+    assert(totalBonus.eq(await airdrop.totalBonus()))
   })
 
   it("can't add more users after list is finalized", async () => {
@@ -79,7 +80,7 @@ contract("Big CSV List Airdrop Simulation", async ([owner]) => {
 
   it("adding enough funds", async () => {
     await rndr.transfer(airdrop.address, totalBonus)
-    assert.equal(await rndr.balanceOf(airdrop.address), totalBonus)
+    assert(totalBonus.eq(await rndr.balanceOf(airdrop.address)))
   })
 
   it("pay bonuses", async () => {
@@ -97,8 +98,8 @@ contract("Big CSV List Airdrop Simulation", async ([owner]) => {
   it("check user balances for bonus received", async () => {
     for (let i = 0; i<userCount; i++) {
       let userBonus = await rndr.balanceOf(users[i])
-      assert.equal(userBonus, bonuses[i])
-      console.log(`User ${i} got ${userBonus} of ${bonuses[i]} bonus`)
+      assert(userBonus.eq(bonuses[i]))
+      console.log(`User ${i} got ${userBonus.toString()} of ${bonuses[i].toString()} bonus`)
     }
   })
 })
