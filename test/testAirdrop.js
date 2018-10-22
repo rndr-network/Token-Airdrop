@@ -1,14 +1,14 @@
-const Airdrop = artifacts.require("Airdrop")
+const AirDrop = artifacts.require("AirDrop")
 const RenderTokenMock = artifacts.require("RenderTokenMock")
 
-contract("Airdrop", async ([owner, ...users]) => {
+contract("AirDrop", async ([owner, ...users]) => {
   const bonuses = [300, 200, 100]
   const totalBonus = bonuses.reduce((acc, val) => acc + val, 0)
   const userCount = bonuses.length
   users = users.slice(0, userCount)
 
   before(async () => {
-    airdrop = await Airdrop.deployed();
+    airdrop = await AirDrop.deployed();
     rndr = await RenderTokenMock.deployed();
   })
 
@@ -18,7 +18,7 @@ contract("Airdrop", async ([owner, ...users]) => {
 
   it("has balance", async () => {
     let balance = await rndr.balanceOf(owner)
-    assert(balance.gt(0), `Owner has ${balance.toNumber()} RNDR`)
+    assert(balance > 0, `Owner has ${balance} RNDR`)
   })
   
   it("can add multiple users (userCount check)", async () => {
@@ -84,11 +84,11 @@ contract("Airdrop", async ([owner, ...users]) => {
     let initialBalance = await rndr.balanceOf(airdrop.address)
 
     await rndr.transfer(airdrop.address, 100)
-    assert.equal(await rndr.balanceOf(airdrop.address), 100 + initialBalance*1, `Airdrop balance before is ${(await rndr.balanceOf(airdrop.address)).toNumber()} instead of ${100 + initialBalance*1}`)
+    assert.equal(await rndr.balanceOf(airdrop.address), 100 + initialBalance*1, `AirDrop balance before is ${(await rndr.balanceOf(airdrop.address)).toNumber()} instead of ${100 + initialBalance*1}`)
 
     let ownerBalance = await rndr.balanceOf(owner)
     await airdrop.returnTokens()
-    assert.equal(await rndr.balanceOf(airdrop.address), 0, `Airdrop balance after is ${(await rndr.balanceOf(airdrop.address)).toNumber()} instead of 0`)
+    assert.equal(await rndr.balanceOf(airdrop.address), 0, `AirDrop balance after is ${(await rndr.balanceOf(airdrop.address)).toNumber()} instead of 0`)
     assert.equal(await rndr.balanceOf(owner), 100 + ownerBalance*1, `Owner balance after is ${await rndr.balanceOf(owner)} instead of ${100 + ownerBalance*1}`)
   })
 })

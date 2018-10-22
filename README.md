@@ -25,4 +25,5 @@
   To run, do the following:
   1. `npm install`
   2. Get latest ganache or any other blockchain that supports require messages running on port 8545
-  3. `truffle test` (global fresh truffle v5 installation required)
+  3. `truffle compile`
+  4. `truffle test` (global fresh truffle v5 installation required)

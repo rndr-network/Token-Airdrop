@@ -7,17 +7,17 @@ function loadBonusList() {
   return bonusList
 }
 
-const Airdrop = artifacts.require("Airdrop")
+const AirDrop = artifacts.require("AirDrop")
 const RenderTokenMock = artifacts.require("RenderTokenMock")
 
-contract("Big CSV List Airdrop Simulation", async ([owner]) => {
+contract("Big CSV List AirDrop Simulation", async ([owner]) => {
   var bonuses
   var users
   var totalBonus
   var userCount
 
   before(async () => {
-    airdrop = await Airdrop.deployed();
+    airdrop = await AirDrop.deployed();
     rndr = await RenderTokenMock.deployed();
     let bonusList = loadBonusList()
     users = bonusList.map((e) => {return e[0]})
@@ -42,7 +42,7 @@ contract("Big CSV List Airdrop Simulation", async ([owner]) => {
       idTo = i + batchSize
       if (idTo > userCount) idTo = userCount;
       await airdrop.addManyUsers(users.slice(idFrom, idTo), bonuses.slice(idFrom, idTo))
-      console.log(`Adding users ${idFrom} to ${idTo} to Airdrop Contract...`)
+      console.log(`Adding users ${idFrom} to ${idTo} to AirDrop Contract...`)
     }
     assert.equal(await airdrop.getUserCount(), userCount)
   })
