@@ -26,6 +26,7 @@ contract AirDrop is Ownable {
 
   event AddedUser(address indexed userAddress, uint256 userIndex, uint256 bonusAmount);
   event PaidUser(address indexed userAddress, uint256 userIndex, uint256 amountPaid);
+  event DoublePayAttempt(address indexed userAddress, uint256 userIndex, uint256 amountPaid);
 
   /**
   * @notice Create Airdrop contract
@@ -65,6 +66,8 @@ contract AirDrop is Ownable {
       totalBonus = totalBonus.sub(amount);
       ERC20(renderTokenAddress).safeTransfer(bonusAddresses[_id], amount);
       emit PaidUser(bonusAddresses[_id], _id, amount);
+    } else {
+      emit DoublePayAttempt(bonusAddresses[_id], _id, amount); // This basically can't happen. Check why there was an attempt to double-pay?
     }
   }
 
