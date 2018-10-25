@@ -80,7 +80,7 @@ contract AirDrop is Ownable {
   function _payUserRange(uint256 _idFrom, uint256 _idTo) internal returns(uint256 totalPaid) {
     require(_idTo < bonusAddresses.length, "idTo should be less than user count");
     require(_idFrom <= _idTo, "idFrom shouldn't be greater than idTo");
-    for (uint i = _idFrom; i <= _idTo; i++) { // idTo included
+    for (uint256 i = _idFrom; i <= _idTo; i++) { // idTo included
       totalPaid = totalPaid.add(_payUser(i));
     }
     nextUserToBePaid = _idTo.add(1);
