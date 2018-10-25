@@ -1,4 +1,4 @@
-const BN = require('bn.js');
+const BigNumber = web3.BigNumber;
 const fs = require('fs')
 
 function loadBonusList() {
@@ -17,12 +17,12 @@ contract("Big CSV List AirDrop Simulation", async ([owner]) => {
   var userCount
 
   before(async () => {
-    airdrop = await AirDrop.deployed();
-    rndr = await RenderTokenMock.deployed();
+    rndr = await RenderTokenMock.new(owner, new BigNumber("331073260586440000000000"));
+    airdrop = await AirDrop.new(rndr.address);
     let bonusList = loadBonusList()
     users = bonusList.map((e) => {return e[0]})
-    bonuses = bonusList.map((e) => {return new BN(e[1])})
-    totalBonus = bonuses.reduce((acc, val) => acc.add(val), new BN(0))
+    bonuses = bonusList.map((e) => {return new BigNumber(e[1])})
+    totalBonus = bonuses.reduce((acc, val) => acc.add(val), new BigNumber(0))
     userCount = bonuses.length
   })
 
@@ -55,13 +55,14 @@ contract("Big CSV List AirDrop Simulation", async ([owner]) => {
 
   it("check bonus addresses list", async () => {
     for (let i = 0; i < userCount; i++) {
-      assert.equal(await airdrop.bonusAddresses(i), users[i])
+      assert.equal((await airdrop.bonusAddresses(i)).toUpperCase(), users[i].toUpperCase())
     }
   })
 
   it("check bonuses amounts list", async () => {
     for (let i = 0; i < userCount; i++) {
-      assert(bonuses[i].eq(await airdrop.bonusAmounts(await airdrop.bonusAddresses(i))))
+      let amount = await airdrop.bonusAmounts(await airdrop.bonusAddresses(i))
+      assert(bonuses[i].eq(amount))
     }
   })
 
@@ -74,7 +75,7 @@ contract("Big CSV List AirDrop Simulation", async ([owner]) => {
       await airdrop.addManyUsers([owner], [50])
       assert.fail()
     } catch (err) {
-      assert(err.reason === "Adding users allowed only when list isn't finalized", err.reason)
+      assert(err.message.includes("Adding users allowed only when list isn't finalized"), err.message)
     }
   })
 
