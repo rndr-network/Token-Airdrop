@@ -1,3 +1,4 @@
+const BigNumber = web3.BigNumber;
 const AirDrop = artifacts.require("AirDrop")
 const RenderTokenMock = artifacts.require("RenderTokenMock")
 
@@ -8,8 +9,8 @@ contract("AirDrop", async ([owner, ...users]) => {
   users = users.slice(0, userCount)
 
   before(async () => {
-    airdrop = await AirDrop.deployed();
-    rndr = await RenderTokenMock.deployed();
+    rndr = await RenderTokenMock.new(owner, new BigNumber("331073260586440000000000"));
+    airdrop = await AirDrop.new(rndr.address);
   })
 
   it("sets an owner", async () => {
@@ -43,7 +44,7 @@ contract("AirDrop", async ([owner, ...users]) => {
       await airdrop.payManyUsers(2)
       assert.fail()
     } catch (err) {
-      assert(err.reason === 'Payment can be called only after list is finalized', err.reason)
+      assert(err.message.includes("Payment can be called only after list is finalized"), err.message)
     }
   })
 
@@ -58,7 +59,7 @@ contract("AirDrop", async ([owner, ...users]) => {
       await airdrop.addManyUsers([owner], [50])
       assert.fail()
     } catch (err) {
-      assert(err.reason === "Adding users allowed only when list isn't finalized", err.reason)
+      assert(err.message.includes("Adding users allowed only when list isn't finalized"), err.message)
     }
   })
 
