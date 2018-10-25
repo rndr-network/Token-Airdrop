@@ -13,7 +13,7 @@
       * Check that corresponding `bonusAmounts` mappings have relevant amount of bonus
       * Check `totalBonus`
       * Check `userCount`
-  5. If all checks correspond to your local bonus list - load Airdrop contract with enough RNDR tokens (`totalBonus`)
+  5. If all checks correspond to your local bonus list, send a number of RNDR tokens equal to the `totalBonus` variable to the Airdrop contract's address before calling the payment function.
   6. Call `payManyUsers(batchSize)` with a chosen `batchSize` several times (paying each user costs around 40-50k gas)
   7. If any excess tokens are left on the contract - it can be withdrawn by calling `returnTokens()`
 
@@ -25,4 +25,5 @@
   To run, do the following:
   1. `npm install`
   2. Get latest ganache or any other blockchain that supports require messages running on port 8545
-  3. `truffle test` (global fresh truffle v5 installation required)
+  3. `truffle compile`
+  4. `truffle test`

@@ -1,15 +1,16 @@
-const Airdrop = artifacts.require("Airdrop")
+const BigNumber = web3.BigNumber;
+const AirDrop = artifacts.require("AirDrop")
 const RenderTokenMock = artifacts.require("RenderTokenMock")
 
-contract("Airdrop", async ([owner, ...users]) => {
+contract("AirDrop", async ([owner, ...users]) => {
   const bonuses = [300, 200, 100]
   const totalBonus = bonuses.reduce((acc, val) => acc + val, 0)
   const userCount = bonuses.length
   users = users.slice(0, userCount)
 
   before(async () => {
-    airdrop = await Airdrop.deployed();
-    rndr = await RenderTokenMock.deployed();
+    rndr = await RenderTokenMock.new(owner, new BigNumber("331073260586440000000000"));
+    airdrop = await AirDrop.new(rndr.address);
   })
 
   it("sets an owner", async () => {
@@ -18,7 +19,7 @@ contract("Airdrop", async ([owner, ...users]) => {
 
   it("has balance", async () => {
     let balance = await rndr.balanceOf(owner)
-    assert(balance.gt(0), `Owner has ${balance.toNumber()} RNDR`)
+    assert(balance > 0, `Owner has ${balance} RNDR`)
   })
   
   it("can add multiple users (userCount check)", async () => {
@@ -43,7 +44,7 @@ contract("Airdrop", async ([owner, ...users]) => {
       await airdrop.payManyUsers(2)
       assert.fail()
     } catch (err) {
-      assert(err.reason === 'Payment can be called only after list is finalized', err.reason)
+      assert(err.message.includes("Payment can be called only after list is finalized"), err.message)
     }
   })
 
@@ -58,7 +59,7 @@ contract("Airdrop", async ([owner, ...users]) => {
       await airdrop.addManyUsers([owner], [50])
       assert.fail()
     } catch (err) {
-      assert(err.reason === "Adding users allowed only when list isn't finalized", err.reason)
+      assert(err.message.includes("Adding users allowed only when list isn't finalized"), err.message)
     }
   })
 
@@ -84,11 +85,11 @@ contract("Airdrop", async ([owner, ...users]) => {
     let initialBalance = await rndr.balanceOf(airdrop.address)
 
     await rndr.transfer(airdrop.address, 100)
-    assert.equal(await rndr.balanceOf(airdrop.address), 100 + initialBalance*1, `Airdrop balance before is ${(await rndr.balanceOf(airdrop.address)).toNumber()} instead of ${100 + initialBalance*1}`)
+    assert.equal(await rndr.balanceOf(airdrop.address), 100 + initialBalance*1, `AirDrop balance before is ${(await rndr.balanceOf(airdrop.address)).toNumber()} instead of ${100 + initialBalance*1}`)
 
     let ownerBalance = await rndr.balanceOf(owner)
     await airdrop.returnTokens()
-    assert.equal(await rndr.balanceOf(airdrop.address), 0, `Airdrop balance after is ${(await rndr.balanceOf(airdrop.address)).toNumber()} instead of 0`)
+    assert.equal(await rndr.balanceOf(airdrop.address), 0, `AirDrop balance after is ${(await rndr.balanceOf(airdrop.address)).toNumber()} instead of 0`)
     assert.equal(await rndr.balanceOf(owner), 100 + ownerBalance*1, `Owner balance after is ${await rndr.balanceOf(owner)} instead of ${100 + ownerBalance*1}`)
   })
 })
