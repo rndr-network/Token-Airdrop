@@ -33,6 +33,7 @@ contract AirDrop is Ownable {
   * @param _renderTokenAddress Address of current RNDR token ERC20 contract
   */
   constructor(address _renderTokenAddress) public {
+    require(_renderTokenAddress != address(0), "_renderTokenAddress must not be null");
     renderTokenAddress = _renderTokenAddress;
   }
 
@@ -49,7 +50,7 @@ contract AirDrop is Ownable {
     require (bonusAmounts[_userAddress] == 0, "User bonus shouldn't exist before adding");
     bonusAmounts[_userAddress] = _amount;
     totalBonus = totalBonus.add(_amount);
-    uint256 userIndex = bonusAddresses.push(_userAddress) - 1;
+    uint256 userIndex = bonusAddresses.push(_userAddress).sub(1);
     emit AddedUser(_userAddress, userIndex, _amount);
   }
 
@@ -107,7 +108,7 @@ contract AirDrop is Ownable {
   function addManyUsers(address[] _recipients, uint256[] _amounts) external onlyOwner {
     require(!listFinalized, "Adding users allowed only when list isn't finalized");
     require(_recipients.length == _amounts.length, "_recipients and _amounts arrays have different number of elements");
-    for (uint i = 0; i < _recipients.length; i++) {
+    for (uint256 i = 0; i < _recipients.length; i++) {
       _addUser(_recipients[i], _amounts[i]);
     }
   }
