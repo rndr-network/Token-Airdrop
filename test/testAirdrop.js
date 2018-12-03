@@ -10,7 +10,7 @@ contract("AirDrop", async ([owner, ...users]) => {
 
   before(async () => {
     rndr = await RenderTokenMock.new(owner, new BigNumber("331073260586440000000000"));
-    airdrop = await AirDrop.new(rndr.address);
+    airdrop = await AirDrop.new(rndr.address, owner);
   })
 
   it("sets an owner", async () => {

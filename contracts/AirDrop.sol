@@ -17,6 +17,7 @@ contract AirDrop is Ownable {
   using SafeMath for uint256;
 
   address public renderTokenAddress;
+  address public refundAddress;
   bool public listFinalized = false;
   uint256 public totalBonus = 0; // Before finalizing - check if totalBonus matches the total bonus amount to distribute
   uint256 public nextUserToBePaid = 0;
@@ -31,10 +32,13 @@ contract AirDrop is Ownable {
   /**
   * @notice Create Airdrop contract
   * @param _renderTokenAddress Address of current RNDR token ERC20 contract
+  * @param _refundAddress Address where to refund the excess of RNDR tokens
   */
-  constructor(address _renderTokenAddress) public {
+  constructor(address _renderTokenAddress, address _refundAddress) public {
     require(_renderTokenAddress != address(0), "_renderTokenAddress must not be null");
+    require(_refundAddress != address(0), "_refundAddress must not be null");
     renderTokenAddress = _renderTokenAddress;
+    refundAddress = _refundAddress;
   }
 
   //
@@ -139,10 +143,10 @@ contract AirDrop is Ownable {
   }
 
   /**
-  * @notice Return the unpaid excess of tokens to owner
+  * @notice Return the unpaid excess of tokens to refundAddress
   */
   function returnTokens() external onlyOwner {
     uint256 amount = ERC20(renderTokenAddress).balanceOf(address(this));
-    ERC20(renderTokenAddress).transfer(owner, amount);
+    ERC20(renderTokenAddress).transfer(refundAddress, amount);
   }
 }
