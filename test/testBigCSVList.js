@@ -18,7 +18,7 @@ contract("Big CSV List AirDrop Simulation", async ([owner]) => {
 
   before(async () => {
     rndr = await RenderTokenMock.new(owner, new BigNumber("331073260586440000000000"));
-    airdrop = await AirDrop.new(rndr.address);
+    airdrop = await AirDrop.new(rndr.address, owner);
     let bonusList = loadBonusList()
     users = bonusList.map((e) => {return e[0]})
     bonuses = bonusList.map((e) => {return new BigNumber(e[1])})
